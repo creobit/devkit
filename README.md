@@ -103,9 +103,9 @@ services:
       - "traefik.http.routers.wordpress.rule=Host(`wordpress.devkit.test`)"
 
 networks:
-  default:
-    external:
-      name: proxy
+  proxy:
+    external: true
+    name: proxy
 ```
 
 Then run `docker-compose up` then open browser and go to http://wordpress.devkit.test

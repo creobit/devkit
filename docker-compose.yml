@@ -25,6 +25,7 @@ services:
     ports:
       - 80:80
       - 443:443
+      # - 8080:8080
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
@@ -45,6 +46,24 @@ services:
       # - "traefik.http.routers.traefik-secure.tls=true"
       # - "traefik.http.routers.traefik-secure.tls.certresolver=letsencrypt"
       # - "traefik.http.routers.traefik-secure.service=api@internal"
+
+  whoami:
+    image: containous/whoami
+    # Container name must not be present to scale up
+    # container_name: whoami
+    security_opt:
+      - no-new-privileges:true
+    labels:
+      # Enable this container to be mapped by traefik
+      # For more information, see: https://docs.traefik.io/providers/docker/#exposedbydefault
+      - "traefik.enable=true"
+      # URL to reach this container
+      - "traefik.http.routers.whoami.rule=Host(`whoami.devkit.test`)"
+      # Activation of TLS
+      - "traefik.http.routers.whoami.tls=true"
+      # If port is different than 80, use the following service:
+      # - "traefik.http.services.<service_name>.loadbalancer.server.port=<port>"
+
 
   # db:
   #   restart: unless-stopped
@@ -85,5 +104,5 @@ services:
 
 networks:
   default:
-    external: 
-      name: proxy
+    external: true
+    name: proxy
