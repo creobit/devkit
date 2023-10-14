@@ -1,0 +1,33 @@
+tls:
+  options:
+    default:
+      minVersion: VersionTLS12
+    mintls13:
+      minVersion: VersionTLS13
+
+  stores:
+    default:
+      defaultCertificate:
+        certFile: /certs/local.crt
+        keyFile: /certs/local.key
+
+http:
+  middlewares:
+    cors-header:
+      headers:
+        accessControlAllowMethods:
+          - GET
+          - OPTIONS
+          - PUT
+        accessControlAllowOriginList:
+          - https://localhost
+        accessControlMaxAge: 100
+        addVaryHeader: true
+    custom-header:
+      headers:
+        customRequestHeaders: 
+          X-Forwarded-By: "Traefik"
+    default-auth:
+      basicAuth:
+        users:
+          - "test:$apr1$H6uskkkW$IgXLP6ewTrSuBkTrqE8wj/" # test/test

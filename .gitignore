@@ -1,0 +1,7 @@
+.*-data
+.db
+.DS_Store
+*.sublime*
+certs/*
+!certs/.gitkeep
+acme.json

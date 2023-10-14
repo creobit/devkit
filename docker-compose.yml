@@ -1,0 +1,89 @@
+version: '3'
+
+services:
+  dnsmasq:
+    restart: unless-stopped
+    image: jpillora/dnsmasq:latest
+    container_name: dnsmasq
+    ports:
+      - 53:53/udp
+    volumes:
+      - ./dnsmasq/dnsmasq.conf:/etc/dnsmasq.conf:ro
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.dnsmasq.entrypoints=http,https"
+      - "traefik.http.routers.dnsmasq.rule=Host(`dnsmasq.devkit.test`)"
+      - "traefik.http.routers.dnsmasq.tls=true"
+      - "traefik.http.services.dnsmasq.loadbalancer.server.port=8080"
+
+  traefik:
+    restart: unless-stopped
+    image: traefik:v2.10
+    container_name: traefik
+    security_opt:
+      - no-new-privileges:true
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./certs:/certs:ro
+      - ./traefik/traefik.yml:/traefik.yml:ro
+      - ./traefik/dynamic.yml:/dynamic.yml:ro
+      - ./traefik/acme.json:/acme.json
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.traefik.entrypoints=http,https"
+      - "traefik.http.routers.traefik.rule=Host(`localhost`,`traefik.devkit.test`)"
+      - "traefik.http.routers.traefik.service=api@internal"
+      - "traefik.http.routers.traefik.tls=true"
+      # - "traefik.http.middlewares.traefik-https-redirect.redirectscheme.scheme=https"
+      # - "traefik.http.routers.traefik.middlewares=traefik-https-redirect"
+      # - "traefik.http.routers.traefik-secure.entrypoints=https"
+      # - "traefik.http.routers.traefik-secure.rule=Host(`traefik.devkit.test`)"
+      # - "traefik.http.routers.traefik-secure.tls=true"
+      # - "traefik.http.routers.traefik-secure.tls.certresolver=letsencrypt"
+      # - "traefik.http.routers.traefik-secure.service=api@internal"
+
+  # db:
+  #   restart: unless-stopped
+  #   image: mysql:5.7
+  #   container_name: mysqldb
+  #   ports:
+  #     - "3306:3306"
+  #   volumes:
+  #     - ".mysql-data:/var/lib/mysql"
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: root
+
+  # postgres:
+  #   restart: unless-stopped
+  #   image: postgres:9.6
+  #   ports:
+  #     - "5432:5432"
+  #   labels:
+  #     - "traefik.enable=false"
+  #   volumes:
+  #     - ".pg-data:/var/lib/postgresql/data"
+  #   environment:
+  #     POSTGRES_USER: postgres
+  #     POSTGRES_PASSWORD: postgres
+
+  mailhog:
+    restart: unless-stopped
+    image: mailhog/mailhog
+    container_name: mailhog
+    ports:
+      - "1025:1025"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.mailhog.entrypoints=http,https"
+      - "traefik.http.routers.mailhog.rule=Host(`mailhog.devkit.test`)"
+      - "traefik.http.routers.mailhog.tls=true"
+      - "traefik.http.services.mailhog.loadbalancer.server.port=8025"
+
+networks:
+  default:
+    external: 
+      name: proxy

@@ -1,0 +1,44 @@
+entryPoints:
+  http:
+    address: ":80"
+    forwardedHeaders:
+      insecure: true
+    http:
+      redirections:
+        entryPoint:
+          to: https
+          scheme: https
+          permanent: true
+  https:
+    address: ":443"
+    http:
+      middlewares:
+        - custom-header@file
+        - cors-header@file
+        # - test-auth@file
+
+providers:
+  docker:
+    endpoint: "unix:///var/run/docker.sock"
+    exposedByDefault: false
+  file:
+    filename: /dynamic.yml
+    watch: false
+
+certificatesResolvers:
+  letsencrypt:
+    acme:
+      email: devkit@localhost.com
+      storage: /acme.json
+      httpChallenge:
+        entryPoint: http
+
+api:
+  dashboard: true
+  insecure: false
+  debug: false
+
+log:
+  level: INFO
+
+accessLog: true
