@@ -64,31 +64,6 @@ services:
       # If port is different than 80, use the following service:
       # - "traefik.http.services.<service_name>.loadbalancer.server.port=<port>"
 
-
-  # db:
-  #   restart: unless-stopped
-  #   image: mysql:5.7
-  #   container_name: mysqldb
-  #   ports:
-  #     - "3306:3306"
-  #   volumes:
-  #     - ".mysql-data:/var/lib/mysql"
-  #   environment:
-  #     MYSQL_ROOT_PASSWORD: root
-
-  # postgres:
-  #   restart: unless-stopped
-  #   image: postgres:9.6
-  #   ports:
-  #     - "5432:5432"
-  #   labels:
-  #     - "traefik.enable=false"
-  #   volumes:
-  #     - ".pg-data:/var/lib/postgresql/data"
-  #   environment:
-  #     POSTGRES_USER: postgres
-  #     POSTGRES_PASSWORD: postgres
-
   mailhog:
     restart: unless-stopped
     image: mailhog/mailhog
