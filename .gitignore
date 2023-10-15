@@ -5,3 +5,4 @@
 certs/*
 !certs/.gitkeep
 acme.json
+docker-compose.private.yml
