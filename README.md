@@ -86,7 +86,7 @@ Go to https://traefik.dev.local or https://localhost
 
 ## Usage
 
-- When starting any new projects, just use this sample config
+- When starting any new projects, just use this sample config template in your project's docker-compose.yml
 
 ```yml
 version: "3"
